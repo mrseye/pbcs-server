@@ -1,0 +1,146 @@
+### Oracle PBCS API - VS Code REST Client
+### Extension requise : REST Client (Huachao Mao)
+### Lancez le serveur : uvicorn main:app --reload
+
+@baseUrl = http://localhost:8000
+
+###############################################
+# INFO
+###############################################
+
+### Infos du serveur
+GET {{baseUrl}}/
+
+### Diagnostic de connexion Oracle PBCS (DNS + HTTPS + Auth)
+GET {{baseUrl}}/health
+
+###############################################
+# APPLICATIONS & CUBES
+###############################################
+
+### Lister toutes les applications disponibles
+GET {{baseUrl}}/applications
+
+### Lister les cubes de l'application EPBCS
+GET {{baseUrl}}/applications/EPBCS/cubes
+
+### Lister les cubes d'une autre application (remplacez le nom)
+GET {{baseUrl}}/applications/Vision/cubes
+
+###############################################
+# JOBS
+###############################################
+
+### Lister les 20 derniers jobs
+GET {{baseUrl}}/jobs?limit=20
+
+### Statut d'un job spécifique (remplacez 12345 par votre jobId)
+GET {{baseUrl}}/jobs/12345
+
+### Attendre la fin d'un job
+GET {{baseUrl}}/jobs/12345/wait?timeout=300
+
+###############################################
+# RÈGLES MÉTIER
+###############################################
+
+### Lancer une règle (sans attendre)
+POST {{baseUrl}}/rules/run
+Content-Type: application/json
+
+{
+  "rule_name": "Calculate_FY2024",
+  "parameters": {
+    "Scenario": "Actual",
+    "Year": "FY2024"
+  },
+  "wait": false
+}
+
+### Lancer une règle et attendre le résultat
+POST {{baseUrl}}/rules/run
+Content-Type: application/json
+
+{
+  "rule_name": "Calculate_FY2024",
+  "parameters": {
+    "Scenario": "Budget"
+  },
+  "wait": true,
+  "timeout": 300
+}
+
+### Lancer un ruleset
+POST {{baseUrl}}/rules/ruleset/run
+Content-Type: application/json
+
+{
+  "ruleset_name": "Monthly_Close_Rules",
+  "wait": true
+}
+
+###############################################
+# DONNÉES
+###############################################
+
+### Importer des données (fichier déjà dans l'inbox Oracle)
+POST {{baseUrl}}/data/import
+Content-Type: application/json
+
+{
+  "job_name": "Load_Actuals",
+  "import_file": "actuals_jan2024.csv",
+  "clear_data": false,
+  "wait": true
+}
+
+### Exporter des données
+POST {{baseUrl}}/data/export
+Content-Type: application/json
+
+{
+  "job_name": "Export_Budget",
+  "export_file": "budget_export.csv",
+  "wait": true
+}
+
+###############################################
+# MÉTADONNÉES
+###############################################
+
+### Importer des métadonnées
+POST {{baseUrl}}/metadata/import
+Content-Type: application/json
+
+{
+  "job_name": "Import_Entity_Members",
+  "import_file": "entity_2024.csv",
+  "dimension": "Entity",
+  "wait": true
+}
+
+### Exporter des métadonnées
+POST {{baseUrl}}/metadata/export
+Content-Type: application/json
+
+{
+  "job_name": "Export_Account_Dim",
+  "dimension": "Account",
+  "wait": true
+}
+
+### Rafraîchir le cube
+POST {{baseUrl}}/metadata/cube/refresh?wait=true
+
+###############################################
+# FICHIERS
+###############################################
+
+### Lister les fichiers disponibles dans Oracle
+GET {{baseUrl}}/files
+
+### Télécharger un fichier depuis Oracle
+GET {{baseUrl}}/files/download/budget_export.csv
+
+### Uploader un fichier (via Swagger UI recommandé pour les fichiers binaires)
+# Utilisez http://localhost:8000/docs#/Fichiers/upload_file_files_upload_post
