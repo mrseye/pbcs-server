@@ -57,6 +57,13 @@ async def pbcs_error_handler(request: Request, exc: PBCSError):
         content={"error": "PBCS API Error", "detail": exc.detail},
     )
 
+@app.exception_handler(TimeoutError)
+async def timeout_error_handler(request: Request, exc: TimeoutError):
+    return JSONResponse(
+        status_code=504,
+        content={"error": "Job timeout", "detail": str(exc)},
+    )
+
 # Inclusion des routers
 app.include_router(applications.router)
 app.include_router(jobs.router)

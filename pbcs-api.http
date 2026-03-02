@@ -24,8 +24,14 @@ GET {{baseUrl}}/applications
 ### Lister les cubes de l'application EPBCS
 GET {{baseUrl}}/applications/EPBCS/cubes
 
-### Lister les cubes d'une autre application (remplacez le nom)
-GET {{baseUrl}}/applications/Vision/cubes
+### Lister les dimensions de l'application configurée
+GET {{baseUrl}}/applications/dimensions
+
+### Lister les membres d'une dimension (ex: Entity)
+GET {{baseUrl}}/applications/dimensions/Entity/members
+
+### Lister les membres enfants d'un membre parent
+GET {{baseUrl}}/applications/dimensions/Entity/members?parent=TotalEntity&limit=50
 
 ###############################################
 # JOBS
